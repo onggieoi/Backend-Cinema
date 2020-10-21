@@ -5,10 +5,10 @@ export class Test {
   @PrimaryKey()
   id!: number;
 
-  @Property()
+  @Property({ type: 'date' })
   createAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'date', onUpdate: () => new Date() })
   updateAt = new Date();
 
   @Property()

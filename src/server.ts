@@ -1,35 +1,44 @@
-import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
-import cors from 'cors';
 import { MikroORM } from '@mikro-orm/core';
+import express from 'express';
+import cors from 'cors';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import path from 'path';
 
 import { port } from './config';
+import mikroConfig from './mikro-orm.config';
+import { playground } from './playground';
 
-class Server {
-  private App: express.Application;
+(async () => {
+  // setup database
+  const orm = await MikroORM.init(mikroConfig);
+  await orm.getMigrator().up();
 
-  constructor() {
-    this.App = express();
-  };
+  // setup Express server
+  const app: express.Application = express();
+  app.use(cors({
+    origin: '*',
+    credentials: true,
+  }));
+  app.use(express.json());
+  app.use(express.urlencoded());
 
-  async graphQl() {
-    this.App.use(cors({
-      origin: '*',
-      credentials: true,
-    }));
-    this.App.use(express.json());
-    this.App.use(express.urlencoded());
-    this.App.use('/graphql', graphqlHTTP((request: any, response: any) => (
-      // 
-    )));
-  };
+  // setup Graphql - apollo
+  const apolloServer = new ApolloServer({
+    schema: await buildSchema({
+      resolvers: [
+        path.resolve(__dirname, './resolvers/**/*.resolver.ts'),
+        path.resolve(__dirname, './resolvers/**.js'),
+      ],
+      validate: false,
+    }),
+    playground
+  });
 
-  async Start() {
-    await this.graphQl();
-    this.App.listen(port, () => {
-      console.log(`GraphQL Server is now running on port ${port}`);
-    });
-  };
-}
+  apolloServer.applyMiddleware({ app });
 
-new Server().Start();
+  // Run server
+  app.listen(port, () => {
+    console.log(`GraphQL Server is now running on port ${port}`);
+  });
+})().catch(err => console.log(err));

@@ -1,3 +1,3 @@
 require('dotenv').config();
 
-export const port = parseInt(`${process.env.GRAPHQL_PORT || 3000}`, 10);
+export const port = parseInt(`${process.env.SERVER_PORT || 5000}`, 10);
