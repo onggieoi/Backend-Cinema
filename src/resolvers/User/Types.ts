@@ -1,7 +1,7 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, ObjectType, } from "type-graphql";
 
 import { User } from "../../entities/User";
-import { ErrorType } from "../../Types";
+import { ErrorType } from "../ErrorType";
 
 // Inputs
 @InputType()
@@ -22,12 +22,11 @@ export class SignInInput {
   password: string
 }
 
-// Types
 @ObjectType()
 export class UserRespone {
   @Field(() => User, { nullable: true })
-  user?: User
+  user?: User;
 
   @Field(() => [ErrorType], { nullable: true })
-  error?: ErrorType[]
+  errors?: ErrorType[];
 }

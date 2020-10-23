@@ -6,7 +6,7 @@ import fs from 'fs';
 
 const tabs = reduce(
   glob.sync(
-    path.resolve(__dirname, '../**/*.playground.{ts,js}')
+    path.resolve(__dirname, './resolvers/**/*.playground.[tj]s')
   ),
   (queryContents: Array<{}>, filePath: string) => {
     if (fs.existsSync(filePath)) {

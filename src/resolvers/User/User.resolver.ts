@@ -3,13 +3,13 @@ import argon2 from 'argon2';
 
 import { User } from "../../entities/User";
 import { MyContext } from "../../types";
-import { SignInInput, SignUpInput, UserRespone } from './Types';
+import { SignInInput, SignUpInput, UserRespone, } from './Types';
 import { cookieName } from "../../config";
 
 @Resolver()
 export class UserResolver {
   // Sign Up
-  @Mutation(() => UserRespone)
+  @Mutation(() => UserRespone, { nullable: true })
   async userSignUp(
     @Arg("data") data: SignUpInput,
     @Ctx() { req }: MyContext
@@ -17,7 +17,7 @@ export class UserResolver {
     const { username, password } = data;
 
     if (username.length <= 6) return {
-      error: [
+      errors: [
         { field: 'username', message: 'username must be greater 6' }
       ]
     }
@@ -33,7 +33,7 @@ export class UserResolver {
     } catch (error) {
       console.log('------------ ERROR ----------------', error);
       if (error?.detail.includes('already exists')) return {
-        error: [{ field: 'username', message: 'username already exists' }]
+        errors: [{ field: 'username', message: 'username already exists' }]
       }
     }
 
@@ -44,7 +44,7 @@ export class UserResolver {
   }
 
   // Sign In
-  @Mutation(() => UserRespone)
+  @Mutation(() => UserRespone, { nullable: true })
   async userSignIn(
     @Arg('data') data: SignInInput,
     @Ctx() { req }: MyContext
@@ -53,7 +53,7 @@ export class UserResolver {
     const user = await User.findOne({ username });
 
     if (!user) return {
-      error: [
+      errors: [
         { field: 'username', message: "username doesn't exist" }
       ]
     }
@@ -61,7 +61,7 @@ export class UserResolver {
     const isValid = await argon2.verify(user.password, password);
 
     if (!isValid) return {
-      error: [
+      errors: [
         { field: 'password', message: 'Invalid password' }
       ]
     }
@@ -72,13 +72,13 @@ export class UserResolver {
   }
 
   // Query Me
-  @Query(() => User, { nullable: true })
+  @Query(() => UserRespone, { nullable: true })
   async me(
     @Ctx() { req }: MyContext
-  ): Promise<User | null> {
-    if (!req.session.userId) return null;
+  ): Promise<UserRespone> {
+    if (!req.session.userId) return { errors: [{ field: 'user', message: 'user not found' }] };
 
-    return await User.findOne({ id: req.session.userId }) || null;
+    return { user: await User.findOne({ id: req.session.userId }) };
   }
 
   // logout

@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-// import { MikroORM } from '@mikro-orm/core';
 import { createConnection } from 'typeorm';
 import express, { Response } from 'express';
 import cors from 'cors';
@@ -16,9 +15,6 @@ import { playground } from './playground';
 
 (async () => {
   // setup database
-  // const orm = await MikroORM.init(mikroConfig);
-  // await orm.getMigrator().up();
-
   const conn = await createConnection(DbConnectionOptions);
 
   // setup Express server

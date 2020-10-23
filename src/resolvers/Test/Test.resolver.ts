@@ -1,13 +1,30 @@
-import { Resolver, Query, Ctx, Int, Arg, Mutation } from "type-graphql";
+import { Resolver, Query, Int, Arg, Mutation, UseMiddleware } from "type-graphql";
 
+import { isAuth } from "../../middleware/isAuthenticated";
 import { Test } from "../../entities/Test";
-import { MyContext } from "../../types";
+import { QueryOptions, TestsRespone } from './Types';
+import { getConnection } from "typeorm";
 
 @Resolver()
 export class TestResolver {
-  @Query(() => [Test])
-  async tests(): Promise<Test[]> {
-    return await Test.find({});
+  @UseMiddleware(isAuth)
+  @Query(() => TestsRespone)
+  async tests(
+    @Arg('query', () => QueryOptions, { nullable: true }) query: QueryOptions
+  ): Promise<TestsRespone> {
+    const tests = getConnection()
+      .getRepository(Test)
+      .createQueryBuilder('p')
+      .orderBy('id')
+      .take(query.limit || 5);
+
+    if (query.cursor) tests.where('id > :cursor', { cursor: query.cursor });
+
+    const test = await tests.getMany();
+
+    return {
+      tests: test,
+    }
   }
 
   @Query(() => Test, { nullable: true })
@@ -29,14 +46,14 @@ export class TestResolver {
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string,
   ): Promise<Test | null> {
-    const test = await Test.findOne({ id });
-    if (!test) {
+    try {
+      await Test.update({ id }, { title });
+    } catch (error) {
+      console.log(error);
       return null;
     }
 
-    await Test.update({ id }, { title });
-
-    return test;
+    return await Test.findOne({ id }) || null;
   }
 
   @Mutation(() => Boolean)

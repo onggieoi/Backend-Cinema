@@ -6,14 +6,11 @@
   "license": "MIT",
   "scripts": {
     "start": "npx tsc && node --experimental-modules ./dist/server.js",
-    "dev": "nodemon -w src --ext ts --exec ts-node src/server.ts",
-    "migration": "mikro-orm migration:create"
+    "build": "tsc",
+    "dev": "nodemon -w src --ext ts --exec ts-node src/server.ts"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.2.1",
-    "@mikro-orm/core": "^4.2.1",
-    "@mikro-orm/migrations": "^4.2.1",
-    "@mikro-orm/postgresql": "^4.2.1",
+    "@types/lodash": "^4.14.162",
     "apollo-server-express": "^2.18.2",
     "argon2": "^0.27.0",
     "connect-redis": "^5.0.0",
@@ -39,12 +36,5 @@
     "nodemon": "^2.0.6",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
   }
 }
