@@ -85,4 +85,13 @@ query Seats {
   }
 }
 
+mutation BuyTicket {
+  buyTicket(options: {
+    location: "hochiminh",
+    seatId: 1,
+    scheduleTimeId: 1,
+    price: 50000
+  })
+}
+
 `;

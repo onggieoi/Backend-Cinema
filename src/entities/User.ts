@@ -1,6 +1,6 @@
 
 import { Field, Int, ObjectType } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -10,17 +10,16 @@ export class User extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column({ unique: true })
+  @Column()
   username!: string;
 
   @Column()
   password!: string;
 
-  @Field(() => Date)
-  @CreateDateColumn()
-  createAt: Date;
+  @Field()
+  @Column()
+  fullname!: string;
 
-  @Field(() => Date)
-  @UpdateDateColumn()
-  updateAt: Date;
+  @Column()
+  role: number;
 }

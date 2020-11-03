@@ -7,8 +7,7 @@ mutation SignIn {
     user {
       id
       username
-      createAt
-      updateAt
+      fullname
     }
     errors {
       field
@@ -19,14 +18,14 @@ mutation SignIn {
 
 mutation SignUp {
   userSignUp(data: {
-    username: "",
-    password: ""
+    username: "onggieoi",
+    password: "123456",
+    fullname: "Quang Duc"
   }) {
     user {
       id
       username
-      createAt
-      updateAt
+      fullname
     }
     errors {
       field
@@ -40,8 +39,6 @@ query Me {
     user {
       id
       username
-      createAt
-      updateAt
     }
     errors {
       field

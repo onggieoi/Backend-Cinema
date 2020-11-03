@@ -16,17 +16,16 @@ export class AuthResolver {
     @Arg("data") data: SignUpInput,
     @Ctx() { req }: MyContext
   ): Promise<UserRespone> {
-    const { username, password } = data;
+    const { username, password, fullname } = data;
 
     if (username.length <= 6) return {
-      errors: [
-        { field: 'username', message: 'username must be greater 6' }
-      ]
+      errors: { field: 'user', message: 'username must be greater 6' }
     }
 
     const hashedPassword = await argon2.hash(password);
     const user = User.create({
-      username,
+      username, fullname,
+      role: 3,
       password: hashedPassword
     });
 
@@ -34,8 +33,8 @@ export class AuthResolver {
       await user.save();
     } catch (error) {
       console.log('------------ ERROR ----------------', error);
-      if (error?.detail.includes('already exists')) return {
-        errors: [{ field: 'username', message: 'username already exists' }]
+      if (error) return {
+        errors: { field: 'user', message: 'something went srong' }
       }
     }
 
@@ -55,17 +54,13 @@ export class AuthResolver {
     const user = await User.findOne({ username });
 
     if (!user) return {
-      errors: [
-        { field: 'username', message: "username doesn't exist" }
-      ]
+      errors: { field: 'username', message: "username doesn't exist" }
     }
 
     const isValid = await argon2.verify(user.password, password);
 
     if (!isValid) return {
-      errors: [
-        { field: 'password', message: 'Invalid password' }
-      ]
+      errors: { field: 'password', message: 'Invalid password' }
     }
 
     req.session.userId = user.id;
@@ -78,7 +73,7 @@ export class AuthResolver {
   async me(
     @Ctx() { req }: MyContext
   ): Promise<UserRespone> {
-    if (!req.session.userId) return { errors: [{ field: 'user', message: 'user not found' }] };
+    if (!req.session.userId) return { errors: { field: 'user', message: 'user not found' } };
 
     return { user: await User.findOne({ id: req.session.userId }) };
   }

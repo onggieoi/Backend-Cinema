@@ -12,6 +12,9 @@ export class SignUpInput {
 
   @Field()
   password: string
+
+  @Field()
+  fullname: string
 }
 
 @InputType()
@@ -46,8 +49,8 @@ export class UserRespone {
   @Field(() => User, { nullable: true })
   user?: User;
 
-  @Field(() => [ErrorType], { nullable: true })
-  errors?: ErrorType[];
+  @Field(() => ErrorType, { nullable: true })
+  errors?: ErrorType;
 }
 
 @ObjectType()
