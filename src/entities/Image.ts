@@ -12,7 +12,7 @@ export class Image extends BaseEntity {
 
   @Field()
   @Column()
-  image: string;
+  url!: string;
 
   @Field(() => Int)
   @Column()

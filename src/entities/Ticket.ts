@@ -36,4 +36,7 @@ export class Ticket extends BaseEntity {
 
   @ManyToOne(() => Customer, customer => customer.tickets)
   customer: Customer;
+
+  @Column()
+  location: string;
 }

@@ -9,6 +9,7 @@ export default {
   database: dbConfig.dbName,
   username: dbConfig.dbUser,
   password: dbConfig.dbPasword,
+  port: dbConfig.dbPort,
   logging: true,
   synchronize: true,
   entities: [path.resolve(__dirname, './entities/*.[tj]s')]

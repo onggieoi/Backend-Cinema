@@ -22,17 +22,12 @@ export class Customer extends BaseEntity {
   @Column()
   username!: string;
 
-  @Field()
   @Column({ type: 'text' })
   password!: string;
 
   @Field()
   @Column()
   fullname: string;
-
-  @Field(() => Int)
-  @Column()
-  scheduleTimeId: number;
 
   @OneToMany(() => Ticket, ticket => ticket.customer)
   tickets: Ticket[];

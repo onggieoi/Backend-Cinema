@@ -43,9 +43,14 @@ export class Movie extends BaseEntity {
   @Column()
   thumbnail: string;
 
+  @Field()
+  @Column()
+  isShow: boolean;
+
   @OneToMany(() => ScheduleTime, scheduleTime => scheduleTime.movie)
   scheduleTimes: ScheduleTime[];
 
+  @Field(() => [Image], { nullable: true })
   @OneToMany(() => Image, image => image.movie)
-  images: Image[];
+  images?: Image[];
 }

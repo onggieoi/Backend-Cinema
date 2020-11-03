@@ -31,4 +31,7 @@ export class Theater extends BaseEntity {
 
   @OneToMany(() => ScheduleTime, scheduleTime => scheduleTime.theater)
   scheduleTimes: ScheduleTime[];
+
+  @Column()
+  location: string;
 }

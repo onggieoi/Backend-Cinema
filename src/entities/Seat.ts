@@ -32,4 +32,7 @@ export class Seat extends BaseEntity {
 
   @OneToMany(() => Ticket, ticket => ticket.seat)
   tickets: Ticket[];
+
+  @Column()
+  location: string;
 }

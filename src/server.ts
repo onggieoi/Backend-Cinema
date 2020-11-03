@@ -20,11 +20,11 @@ import { playground } from './playground';
   // setup Express server
   const app: express.Application = express();
   app.use(cors({
-    origin: '*',
+    origin: 'http://localhost:3000',
     credentials: true,
   }));
   app.use(express.json());
-  app.use(express.urlencoded());
+  // app.use(express.urlencoded());
 
   // setup Redis session
   const RedisStore = connectRedis(session);
@@ -58,13 +58,17 @@ import { playground } from './playground';
         path.resolve(__dirname, './resolvers/**/*.resolver.ts'),
         path.resolve(__dirname, './resolvers/**/*.resolver.js'),
       ],
+      // globalMiddlewares: [],
       validate: false,
     }),
     playground,
     context: ({ req, res }) => ({ req, res }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: { origin: 'http://localhost:3000' },
+  });
 
   // Run server
   app.listen(port, () => {
@@ -73,7 +77,7 @@ import { playground } from './playground';
 
   app.use('/', (_, res: Response) => res.send(`
   Graphql Server ran successful !!!<br/> 
-  Click here to<a href='http://localhost:${port}/graphql' target='_blank'>read graphql document</a>
+  Click here to <a href='http://localhost:${port}/graphql' target='_blank'>read graphql document</a>
   `));
 
 })().catch(err => console.log(err));
