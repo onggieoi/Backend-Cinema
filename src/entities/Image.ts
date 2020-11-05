@@ -11,7 +11,7 @@ export class Image extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column()
+  @Column({ type: 'text' })
   url!: string;
 
   @Field(() => Int)

@@ -40,7 +40,7 @@ export class Movie extends BaseEntity {
   duration: number;
 
   @Field()
-  @Column()
+  @Column({ type: 'text' })
   thumbnail: string;
 
   @Field()
