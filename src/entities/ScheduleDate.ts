@@ -14,10 +14,6 @@ export class ScheduleDate extends BaseEntity {
   @Column()
   date!: string;
 
-  @Field(() => Int)
-  @Column()
-  percent: number;
-
   @OneToMany(() => ScheduleTime, schedule => schedule.scheduleDate)
   scheduleTimes: ScheduleTime[];
 

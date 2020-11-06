@@ -8,8 +8,9 @@ import path from 'path';
 import redis from 'redis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
+import * as bodyParser from 'body-parser';
 
-import { port, redisConfig, cookieName } from './config';
+import { port, redisConfig, cookieName, clientUri } from './config';
 import DbConnectionOptions from './dbConfig';
 import { playground } from './playground';
 
@@ -20,11 +21,14 @@ import { playground } from './playground';
   // setup Express server
   const app: express.Application = express();
   app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: clientUri,
     credentials: true,
   }));
-  app.use(express.json());
-  // app.use(express.urlencoded());
+
+  // app.use(express.json({ limit: '50mb' }));
+  // app.use(express.urlencoded({ limit: '50mb' }));
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   // setup Redis session
   const RedisStore = connectRedis(session);
@@ -67,7 +71,7 @@ import { playground } from './playground';
 
   apolloServer.applyMiddleware({
     app,
-    cors: { origin: 'http://localhost:3000' },
+    cors: { origin: clientUri },
   });
 
   // Run server

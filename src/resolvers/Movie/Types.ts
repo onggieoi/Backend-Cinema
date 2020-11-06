@@ -2,6 +2,9 @@ import { Field, InputType, Int, ObjectType } from "type-graphql";
 
 @InputType()
 export class CreateMovieInput {
+  @Field(() => Int, { nullable: true })
+  id?: number;
+
   @Field()
   name: string;
 

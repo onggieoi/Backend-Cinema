@@ -21,41 +21,30 @@ export class AuthResolver {
   async createMovie(
     @Arg('data') data: CreateMovieInput
   ) {
-    let result = true;
-    const {
-      name,
-      description,
-      type,
-      director,
-      producer,
-      country,
-      duration,
-      thumbnail,
-      isShow,
-      images } = data;
+    const { id, name, description, type, director, producer, country, duration, thumbnail, isShow, images } = data;
 
-    const movie = Movie.create({
-      name,
-      description,
-      type,
-      director,
-      producer,
-      country,
-      duration,
-      thumbnail,
-      isShow,
-    });
+    let result = true;
+    let movie = new Movie;
+
+    if (id) {
+      await Movie.update({ id }, { name, description, type, director, producer, country, duration, thumbnail, isShow });
+
+      movie = await Movie.findOne({ id }) || new Movie;
+    } else {
+      movie = Movie.create({ name, description, type, director, producer, country, duration, thumbnail, isShow });
+    }
 
     try {
       const savedMovie = await movie.save();
 
-      images.forEach(async (img) => {
+      await Image.delete({ movieId: savedMovie.id });
+
+      images?.forEach(async (img) => {
         const image = Image.create({
           url: img,
           movieId: savedMovie.id,
           movie: savedMovie,
         });
-
         try {
           await image.save();
         } catch (error) {
@@ -63,10 +52,12 @@ export class AuthResolver {
           result = false;
         }
       });
+
     } catch (error) {
       console.log(error);
       result = false;
     }
+
     return result;
   };
 
@@ -76,11 +67,19 @@ export class AuthResolver {
     @Arg('id', () => Int) id: number
   ) {
     try {
+      await Image.delete({ movieId: id });
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+
+    try {
       await Movie.delete({ id });
     } catch (error) {
       console.log(error);
       return false;
     }
+
     return true;
   };
 

@@ -36,6 +36,7 @@ export class ScheduleTime extends BaseEntity {
   @Column()
   scheduleDateId: number;
 
+  @Field(() => ScheduleDate)
   @ManyToOne(() => ScheduleDate, scheduleDate => scheduleDate.scheduleTimes)
   scheduleDate: ScheduleDate;
 
@@ -43,9 +44,11 @@ export class ScheduleTime extends BaseEntity {
   @Column()
   movieId: number;
 
+  @Field(() => Movie, { nullable: true })
   @ManyToOne(() => Movie, movie => movie.scheduleTimes)
   movie: Movie;
 
+  @Field()
   @Column()
   location: string;
 }

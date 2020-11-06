@@ -16,3 +16,5 @@ export const redisConfig = {
 };
 
 export const cookieName = 'qid';
+
+export const clientUri = process.env.CLIENT_URL || '';
