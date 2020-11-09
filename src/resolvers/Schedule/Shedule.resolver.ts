@@ -16,20 +16,8 @@ export class SheduleResolver {
   async createSchedule(
     @Arg("data") data: CreateScheduleInput
   ) {
-    const { date, location, time, price, movieId, theaterId } = data;
+    const { date, location, time, price, movieId, theaterId, id } = data;
     let result = true;
-
-    let scheduleDate = await ScheduleDate.findOne({ date, location });
-
-    if (!scheduleDate) {
-      scheduleDate = ScheduleDate.create({ date, location });
-      try {
-        await scheduleDate.save();
-      } catch (error) {
-        console.log('------------- new Date Error --------------------', error);
-        result = false
-      }
-    }
 
     const movie = await Movie.findOne({ id: movieId });
     const theater = await Theater.findOne({ id: theaterId });
@@ -40,24 +28,52 @@ export class SheduleResolver {
       return false;
     }
 
+    let scheduleDate = await ScheduleDate.findOne({ date, location });
 
-    const scheduleTime = ScheduleTime.create({
-      time,
-      price,
-      location,
-      scheduleDateId: scheduleDate.id,
-      scheduleDate,
-      movie,
-      movieId: movie.id,
-      theater,
-      theaterId: theater.id,
-    });
+    if (!scheduleDate) {
+      scheduleDate = ScheduleDate.create({ date, location });
+    }
 
     try {
-      await scheduleTime.save();
+      await scheduleDate.save();
+
+      scheduleDate = await ScheduleDate.findOne({ date, location });
     } catch (error) {
-      console.log('------------- save Time --------------------', error);
+      console.log('save Date error ---------------', error);
       result = false;
+    }
+
+    if (id) {
+      await ScheduleTime.update({ id }, {
+        time,
+        price,
+        location,
+        scheduleDateId: scheduleDate?.id,
+        scheduleDate,
+        movie,
+        movieId: movie.id,
+        theater,
+        theaterId: theater.id,
+      });
+    } else {
+      const scheduleTime = ScheduleTime.create({
+        time,
+        price,
+        location,
+        scheduleDateId: scheduleDate?.id,
+        scheduleDate,
+        movie,
+        movieId: movie.id,
+        theater,
+        theaterId: theater.id,
+      });
+
+      try {
+        await scheduleTime.save();
+      } catch (error) {
+        console.log('------------- save Time --------------------', error);
+        result = false;
+      }
     }
 
     return result;
@@ -107,7 +123,7 @@ export class SheduleResolver {
 
   @Query(() => [Movie])
   async moviesOption() {
-    return await Movie.find({ isShow: false })
+    return await Movie.find({ isShow: true })
   }
 
   @Query(() => [Theater])

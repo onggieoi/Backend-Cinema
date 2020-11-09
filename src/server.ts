@@ -10,7 +10,7 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import * as bodyParser from 'body-parser';
 
-import { port, redisConfig, cookieName, clientUri } from './config';
+import { port, redisConfig, cookieName, origin } from './config';
 import DbConnectionOptions from './dbConfig';
 import { playground } from './playground';
 
@@ -21,7 +21,7 @@ import { playground } from './playground';
   // setup Express server
   const app: express.Application = express();
   app.use(cors({
-    origin: clientUri,
+    origin: origin,
     credentials: true,
   }));
 
@@ -65,13 +65,14 @@ import { playground } from './playground';
       // globalMiddlewares: [],
       validate: false,
     }),
-    playground,
+
+    // playground,
     context: ({ req, res }) => ({ req, res }),
   });
 
   apolloServer.applyMiddleware({
     app,
-    cors: { origin: clientUri },
+    cors: { origin: origin },
   });
 
   // Run server

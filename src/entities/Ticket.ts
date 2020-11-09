@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, CreateDateColumn } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
 
 import { Seat } from "./Seat";
@@ -39,4 +39,7 @@ export class Ticket extends BaseEntity {
 
   @Column()
   location: string;
+
+  @CreateDateColumn()
+  createAt: Date;
 }

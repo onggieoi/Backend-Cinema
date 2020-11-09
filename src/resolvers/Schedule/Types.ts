@@ -4,6 +4,9 @@ import { ScheduleTime } from "../../entities/ScheduleTime";
 
 @InputType()
 export class CreateScheduleInput {
+  @Field(() => Int, { nullable: true })
+  id?: number;
+
   @Field()
   date: string;
 
