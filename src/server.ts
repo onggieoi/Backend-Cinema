@@ -66,7 +66,7 @@ import { playground } from './playground';
       validate: false,
     }),
 
-    // playground,
+    playground,
     context: ({ req, res }) => ({ req, res }),
   });
 

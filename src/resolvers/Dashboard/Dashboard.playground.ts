@@ -7,5 +7,20 @@ query GeneralReport {
 	}
 }
 
+query Transactions {
+  transactions {
+    user
+    location
+    price
+    date
+  }
+}
+
+query Chart {
+  chart {
+    month
+    price
+  }
+}
 
 `;

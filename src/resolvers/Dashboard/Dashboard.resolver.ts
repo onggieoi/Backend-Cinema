@@ -1,3 +1,4 @@
+import { Between, Like } from "typeorm";
 import { Query, Resolver } from "type-graphql";
 
 import { Ticket } from "../../entities/Ticket";
@@ -42,24 +43,56 @@ export class DashboardResolver {
     return tickets.map((ticket) => ({
       user: ticket.customer.fullname || '',
       location: locationFormat(ticket.location),
-      creditCardNumber: ticket.customer.creditCardNumber,
+      date: ticket.createAt,
       price: ticket.price,
     }));
   }
 
-  // @Query(() => [Chart])
-  // async chart(): Promise<Chart[]> {
-  //   const monthNow = new Date().getUTCMonth() + 1;
+  @Query(() => [Chart])
+  async chart(): Promise<Chart[]> {
+    const charts: Chart[] = [];
 
-  //   for (let i = monthNow; i > 0; i++) {
+    for (let i = 11; i >= 0; i--) {
+      const tickets = await Ticket.find({
+        where: {
+          createAt: Between(firstDay(i), lastDay(i))
+        }
+      });
+      let price = 0;
+      tickets.map((ticket) => {
+        price += ticket.price;
+      });
+      const newChart: Chart = {
+        month: `${monthFormat(i)}`,
+        price,
+      }
+      charts.push(newChart);
+    }
 
-  //   }
-  //   return [];
-  // }
+    return charts;
+  }
 }
 
 const locationFormat = (location: string) => {
   if (location === 'hanoi') return 'UNKNOWN Ha Noi'
   if (location === 'bmt') return 'UNKNOWN BMT'
   return 'UNKNOWN HO CHI MINH'
+}
+
+const firstDay = (subMonth: number) => {
+  const date = new Date(), y = date.getFullYear(), m = date.getMonth() - subMonth;
+
+  return new Date(y, m, 1).toLocaleString();
+}
+
+const lastDay = (subMonth: number) => {
+  const date = new Date(), y = date.getFullYear(), m = date.getMonth() - subMonth;
+
+  return new Date(y, m + 1, 0).toLocaleString();
+}
+
+const monthFormat = (subMonth: number) => {
+  const date = new Date(), y = date.getFullYear(), m = date.getMonth() - subMonth;
+
+  return new Date(y, m, 1).toLocaleString([], { month: '2-digit', year: 'numeric' });
 }

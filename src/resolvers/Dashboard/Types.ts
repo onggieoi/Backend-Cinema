@@ -20,8 +20,8 @@ export class Transactions {
   @Field()
   location: string;
 
-  @Field(() => Int)
-  creditCardNumber: number;
+  @Field(() => Date)
+  date: Date;
 
   @Field(() => Int)
   price: number;
@@ -29,8 +29,8 @@ export class Transactions {
 
 @ObjectType()
 export class Chart {
-  @Field(() => Int)
-  month: number;
+  @Field()
+  month: string;
 
   @Field(() => Int)
   price: number;

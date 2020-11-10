@@ -40,6 +40,7 @@ export class Ticket extends BaseEntity {
   @Column()
   location: string;
 
-  @CreateDateColumn()
+  @Field(() => Date)
+  @CreateDateColumn({ type: 'timestamp' })
   createAt: Date;
 }
