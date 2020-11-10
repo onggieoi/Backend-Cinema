@@ -17,6 +17,6 @@ export class ScheduleDate extends BaseEntity {
   @OneToMany(() => ScheduleTime, schedule => schedule.scheduleDate)
   scheduleTimes: ScheduleTime[];
 
-  @Column()
-  location: string;
+  // @Column()
+  // location: string;
 }

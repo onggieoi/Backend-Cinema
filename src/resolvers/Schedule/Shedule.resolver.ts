@@ -28,16 +28,16 @@ export class SheduleResolver {
       return false;
     }
 
-    let scheduleDate = await ScheduleDate.findOne({ date, location });
+    let scheduleDate = await ScheduleDate.findOne({ date });
 
     if (!scheduleDate) {
-      scheduleDate = ScheduleDate.create({ date, location });
+      scheduleDate = ScheduleDate.create({ date });
     }
 
     try {
       await scheduleDate.save();
 
-      scheduleDate = await ScheduleDate.findOne({ date, location });
+      scheduleDate = await ScheduleDate.findOne({ date });
     } catch (error) {
       console.log('save Date error ---------------', error);
       result = false;
@@ -85,20 +85,25 @@ export class SheduleResolver {
     @Arg('data') data: QuerySchedulesInput
   ) {
     const { location, date } = data;
+
     const scheduleDate = await ScheduleDate.findOne({ date });
 
-    if (!location) {
+    if (location) {
+      console.log('got location');
+
       return await ScheduleTime.find({
         where: {
-          scheduleDateId: scheduleDate?.id,
+          location, scheduleDateId: scheduleDate?.id,
         },
         relations: ['movie', 'theater'],
       });
     }
 
+    console.log(scheduleDate?.id);
+
     return await ScheduleTime.find({
       where: {
-        location, scheduleDateId: scheduleDate?.id,
+        scheduleDateId: scheduleDate?.id,
       },
       relations: ['movie', 'theater'],
     });
