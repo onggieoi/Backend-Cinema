@@ -61,3 +61,27 @@ $$;
 CALL create_schedule ('1604671200574', '11/26/2020', 50000, 1, 2, 'hochiminh' );
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------ With Sql --------------------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE create_schedule_withoutdate(_time varchar, _date varchar, _price int4, _theater int4, _movie int4, _location varchar)
+LANGUAGE SQL
+AS $$
+	
+		WITH new_date as  (
+			INSERT INTO schedule_date("date", "location")
+			VALUES (_date, _location)
+			RETURNING id
+		)
+
+		INSERT INTO schedule_time("time", "price", "theaterId", "movieId", "location", "scheduleDateId")
+		SELECT _time, _price, _theater, _movie, _location, id as dateid
+		FROM new_date;
+$$;
+
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+CALL create_schedule_withoutdate ('1604671200574', '11/20/2020', 50000, 1, 2, 'hochiminh' );
+COMMIT;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
