@@ -1,4 +1,5 @@
 import { Arg, Mutation, Resolver, UseMiddleware, Query, Int } from "type-graphql";
+import { getConnection } from 'typeorm';
 
 import { isAuthor } from "../../middleware/isAuthenticated";
 import { CreateScheduleInput, QuerySchedulesInput, ScheduleRespone } from "./Types";
@@ -16,62 +17,39 @@ export class SheduleResolver {
   async createSchedule(
     @Arg("data") data: CreateScheduleInput
   ) {
+    const em = getConnection();
     const { date, location, time, price, movieId, theaterId, id } = data;
-    let result = true;
 
     const movie = await Movie.findOne({ id: movieId });
     const theater = await Theater.findOne({ id: theaterId });
 
     if (!movie || !theater) {
-      console.log('---------------- NULL MOVIE || THEATER ----------------');
+      console.log('---------------- NULL MOVIE || THEATER NOT FOUND ----------------');
 
       return false;
     }
 
-    let scheduleDate = await ScheduleDate.findOne({ date });
-
-    if (!scheduleDate) {
-      scheduleDate = ScheduleDate.create({ date });
-    }
-
-    try {
-      await scheduleDate.save();
-
-      scheduleDate = await ScheduleDate.findOne({ date });
-    } catch (error) {
-      console.log('save Date error ---------------', error);
-      result = false;
-    }
-
+    let result = true;
     if (id) {
-      await ScheduleTime.update({ id }, {
-        time,
-        price,
-        location,
-        // scheduleDateId: scheduleDate?.id,
-        scheduleDate,
-        movie,
-        // movieId: movie.id,
-        theater,
-        // theaterId: theater.id,
-      });
-    } else {
-      const scheduleTime = ScheduleTime.create({
-        time,
-        price,
-        location,
-        scheduleDateId: scheduleDate?.id,
-        scheduleDate,
-        movie,
-        movieId: movie.id,
-        theater,
-        theaterId: theater.id,
-      });
-
+      const scheduleDate = await ScheduleDate.findOne({ date });
       try {
-        await scheduleTime.save();
+        await ScheduleTime.update({ id }, {
+          time,
+          price,
+          location,
+          scheduleDate,
+          movie,
+          theater,
+        });
       } catch (error) {
-        console.log('------------- save Time --------------------', error);
+        console.log('------------- update Time error --------------------', error);
+        result = false;
+      }
+    } else {
+      try {
+        await em.manager.query(`CALL create_schedule ('${time}', '${date}', ${price}, ${theaterId}, ${movieId}, '${location}')`);
+      } catch (error) {
+        console.log('------------- proc create schedule error --------------------', error);
         result = false;
       }
     }
@@ -121,7 +99,6 @@ export class SheduleResolver {
 
     if (!schedule) {
       return { error: true };
-
     }
     return { schedule };
   }
