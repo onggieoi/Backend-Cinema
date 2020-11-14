@@ -48,12 +48,12 @@ export class SheduleResolver {
         time,
         price,
         location,
-        scheduleDateId: scheduleDate?.id,
+        // scheduleDateId: scheduleDate?.id,
         scheduleDate,
         movie,
-        movieId: movie.id,
+        // movieId: movie.id,
         theater,
-        theaterId: theater.id,
+        // theaterId: theater.id,
       });
     } else {
       const scheduleTime = ScheduleTime.create({
