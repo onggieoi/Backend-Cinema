@@ -82,38 +82,4 @@ export class AuthResolver {
 
     return true;
   };
-
-  // Sign Up
-  // @Mutation(() => UserRespone, { nullable: true })
-  // async userSignUp(
-  //   @Arg("data") data: SignUpInput,
-  //   @Ctx() { req }: MyContext
-  // ): Promise<UserRespone> {
-  //   const { username, password, fullname } = data;
-
-  //   if (username.length <= 6) return {
-  //     errors: { field: 'user', message: 'username must be greater 6' }
-  //   }
-
-  //   const hashedPassword = await argon2.hash(password);
-  //   const user = User.create({
-  //     username, fullname,
-  //     role: 3,
-  //     password: hashedPassword
-  //   });
-
-  //   try {
-  //     await user.save();
-  //   } catch (error) {
-  //     console.log('------------ ERROR ----------------', error);
-  //     if (error) return {
-  //       errors: { field: 'user', message: 'something went srong' }
-  //     }
-  //   }
-
-  //   // set cookie when sign up successful
-  //   req.session.userId = user.id;
-
-  //   return { user };
-  // }
 }

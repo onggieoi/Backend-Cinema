@@ -17,4 +17,4 @@ export const redisConfig = {
 
 export const cookieName = 'qid';
 
-export const origin = [process.env.CLIENT_URL || '', process.env.ADMIN_URL || '']
+export const origin = [process.env.CLIENT_URL || '', process.env.ADMIN_URL || '', process.env.NEXTRON_URL || ''];
